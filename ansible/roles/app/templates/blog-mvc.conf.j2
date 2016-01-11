@@ -1,0 +1,27 @@
+server {
+    server_name (?<subdomain>[\w\-]+).blog-mvc.lan;
+    root /var/www/blog-mvc/blog-mvc/$subdomain/public;
+    index /index.php;
+
+    access_log off;
+    error_log  /var/www/blog-mvc/logs/blog-mvc.$subdomain.nginx.error.log notice;
+
+    sendfile off;
+
+    try_files $uri $uri/ @rewrite;
+
+    location @rewrite {
+        rewrite ^(.*)$ /index.php?_url=$1;
+    }
+
+    location ~* \.(css|js|jpeg|jpg|gif|png|ico)$ {
+        expires 30d;
+        access_log off;
+    }
+
+    location ~* \.(php|phtml)$ {
+        include /etc/nginx/fastcgi_params;
+        fastcgi_pass unix:/var/run/php5-fpm.sock;
+        fastcgi_index /index.php;
+    }
+}

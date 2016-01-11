@@ -1,0 +1,42 @@
+---
+- name: Check Phalcon version
+  shell: php -i |awk '/Phalcon Version/{print $NF}'
+  changed_when: False
+  register: phalcon_version
+
+- name: Phalcon source files
+  git:
+    repo=git://github.com/phalcon/cphalcon.git
+    dest=/tmp/cphalcon accept_hostkey=yes
+    version={{ 'phalcon-v%s'|format(phalcon.version) }}
+  when: phalcon_version.stdout != "{{ phalcon.version }}"
+
+- name: Build Phalcon module
+  shell: ./install chdir=/tmp/cphalcon/build
+  when: phalcon_version.stdout != "{{ phalcon.version }}"
+  sudo: yes
+  register: cphalcon_build
+
+- name: Phalcon ini file
+  lineinfile:
+    dest=/etc/php5/mods-available/phalcon.ini
+    line='extension=phalcon.so'
+    state=present
+    owner=root group=root mode=644
+    create=yes
+  when: cphalcon_build|changed
+  sudo: yes
+  register: phalcon_ini
+
+- name: Phalcone module enabled
+  file:
+    path=/etc/php5/{{ item.path }}/conf.d/30-phalcon.ini
+    src=/etc/php5/mods-available/phalcon.ini
+    state=link
+    owner=root group=root
+  with_items:
+    - { path: 'fpm' }
+    - { path: 'cli' }
+  when: phalcon_ini|changed
+  sudo: yes
+  notify: restart php5-fpm

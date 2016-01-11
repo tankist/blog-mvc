@@ -1,0 +1,15 @@
+---
+- name: Install Nginx
+  sudo: yes
+  apt: pkg=nginx state=latest
+
+- name: Ensure docroot directory exists.
+  file:
+    path: "{{ nginx.docroot }}"
+    state: directory
+    recurse: yes
+
+- name: Change default nginx site
+  sudo: yes
+  template: src=default.tpl dest=/etc/nginx/sites-available/default
+  notify: restart nginx

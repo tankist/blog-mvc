@@ -1,0 +1,50 @@
+---
+server:
+    install: '1'
+    packages: [htop, git, mc, gcc, autoconf, re2c, make, automake, libpcre3, libpcre3-dev, libssl1.0.0, libssl-dev, libcurl3, libcurl4-openssl-dev]
+    timezone: Europe/Kiev
+    locale: en_US.UTF-8
+vagrant_local:
+    install: '1'
+    vm:
+        hostname: blog-mvc.lan
+nginx:
+    install: '1'
+    docroot: /var/www/html
+    servername: '192.168.66.66 blog-mvc.lan'
+mysql:
+    install: '1'
+    ppa: 'mysql-5.6'
+    root_password: root123
+    users:
+        - { user: blog, password: blog, database: 'blog%' }
+    databases:
+        - { database: blog, user: blog, password: blog }
+    dumps:
+        - { database: blog, dump: /var/www/blog-mvc/dump.sql }
+php:
+    install: '1'
+    ppa: 'php5-5.6'
+    packages: [php5-cli, php5-intl, php5-mcrypt, php5-curl, php5-memcache, php5-memcached, php5-mysql, php5-fpm, php5-dev]
+phalcon:
+    version: '2.0.9'
+xdebug:
+    install: '1'
+    settings:
+        default_enable: '1'
+        remote_autostart: '1'
+        remote_connect_back: '1'
+        remote_enable: '1'
+        remote_cookie_expire_time: '86400'
+        coverage_enable: '1'
+        cli_enable: '1'
+        remote_host: 'localhost'
+        remote_port: '9000'
+composer:
+    install: '1'
+adminer_symlink_dirs: ['/var/www/html']
+app:
+    nginx:
+        errors: []
+    environments: [blog-mvc]
+swap_size: '2048'
