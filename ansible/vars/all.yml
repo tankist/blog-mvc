@@ -8,41 +8,79 @@ vagrant_local:
     install: '1'
     vm:
         hostname: blog-mvc.lan
-nginx:
-    install: '1'
-    docroot: /var/www/html
-    servername: '192.168.66.66 blog-mvc.lan'
-mysql:
-    install: '1'
-    ppa: 'mysql-5.6'
-    root_password: root123
-    users:
-        - { user: blog, password: blog, database: 'blog%' }
-    databases:
-        - { database: blog, user: blog, password: blog }
-    dumps:
-        - { database: blog, dump: /var/www/blog-mvc/dump.sql }
-php:
-    install: '1'
-    ppa: 'php5-5.6'
-    packages: [php5-cli, php5-intl, php5-mcrypt, php5-curl, php5-memcache, php5-memcached, php5-mysql, php5-fpm, php5-dev]
+nginx_sendfile: "off"
+nginx_vhosts:
+  - listen: "80"
+    server_name: "192.168.66.66 blog-mvc.lan"
+    root: "/var/www/html"
+    index: "index.php index.html index.htm"
+    extra_parameters: |
+      location ~ \.php$ {
+        fastcgi_split_path_info ^(.+\.php)(/.+)$;
+        fastcgi_pass unix:/var/run/php5-fpm.sock;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
+      }
+
+mysql_root_password: 'temp123'
+mysql_databases:
+    - { name: blog }
+mysql_users:
+    - { name: blog, password: blog, priv: 'blog%.*:ALL' }
+mysql_dumps:
+    - { database: blog, dump: /var/www/blog-mvc/dump.sql }
+
+php_fpm_repository: ppa:ondrej/php5-5.6
+php_fpm_pools:
+  - name: 'www'
+    listen: '/var/run/php5-fpm.sock'
+    user: 'www-data'
+    listen.owner: 'www-data'
+    listen.group: 'www-data'
+    listen.mode: '0660'
+    chdir: '/'
+    catch_workers_output: 'yes'
+php_fpm_pool_defaults:
+  pm.max_children: 4
+  pm.start_servers: 2
+  pm.min_spare_servers: 1
+  pm.max_spare_servers: 3
+  pm.status_path: /status
+  pm: dynamic
+php_fpm_ini:
+ - option: 'engine'
+   section: 'PHP'
+   value: '1'
+ - option: 'error_reporting'
+   section: 'PHP'
+   value: 'E_ALL'
+ - option: 'date.timezone'
+   section: 'date'
+   value: 'Europe/Kiev'
+php_fpm_config:
+ - option: 'error_log'
+   section: 'global'
+   value: '/var/www/blog-mvc/logs/php5-fpm.log'
+php_fpm_apt_packages: [php5-cli, php5-intl, php5-mcrypt, php5-curl, php5-memcache, php5-memcached, php5-mysql, php5-fpm, php5-dev]
+
 phalcon:
     version: '2.0.9'
-xdebug:
-    install: '1'
-    settings:
-        default_enable: '1'
-        remote_autostart: '1'
-        remote_connect_back: '1'
-        remote_enable: '1'
-        remote_cookie_expire_time: '86400'
-        coverage_enable: '1'
-        cli_enable: '1'
-        remote_host: 'localhost'
-        remote_port: '9000'
-composer:
-    install: '1'
+
+php_xdebug_default_enable: 'true'
+php_xdebug_remote_enable: 'true'
+php_xdebug_coverage_enable: 'true'
+php_xdebug_remote_connect_back: 'true'
+php_xdebug_remote_cookie_expire_time: 86400
+
 adminer_symlink_dirs: ['/var/www/html']
+
+nodejs_version: 'nodejs-v5x'
+nodejs_npm_packages:
+    - 'grunt'
+    - 'grunt-cli'
+    - 'gulp'
+    - 'bower'
 app:
     nginx:
         errors: []

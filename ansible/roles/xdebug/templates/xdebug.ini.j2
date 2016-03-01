@@ -1,8 +1,0 @@
-[XDebug]
-zend_extension="xdebug.so"
-
-xdebug.remote_handler=dbgp
-
-{% for key in xdebug.settings %}
-xdebug.{{ key }}={{ xdebug.settings[key] }}
-{% endfor %}

@@ -1,0 +1,19 @@
+# install_roles.yml
+
+- src: https://github.com/tankist/ansible-php-fpm
+  version: d1aaa77cb0c8191fcb26a334c66d5dc995cbd6e0
+  name: tankist.php-fpm
+
+- src: https://github.com/tankist/ansible-role-php-xdebug
+  version: 8fb0e3e14dc2fe25b73a1f5c29b2c03716dcbd9c
+  name: tankist.php-xdebug
+
+- src: https://github.com/Oefenweb/ansible-nodejs
+  name: Oefenweb.nodejs
+
+- src: T2L.composer
+- src: geerlingguy.adminer
+- src: geerlingguy.mysql
+- src: geerlingguy.memcached
+- src: geerlingguy.elasticsearch
+- src: geerlingguy.nginx

@@ -4,14 +4,16 @@
   vars_files:
     - vars/all.yml
   roles:
+    - swap
     - server
     - vagrant_local
-    - swap
-    - nginx
-    - mysql
-    - php
+    - geerlingguy.nginx
+    - geerlingguy.mysql
+#    - mysql
+    - tankist.php-fpm
     - phalcon
-    - xdebug
-    - composer
-    - adminer
+    - tankist.php-xdebug
+    - T2L.composer
+    - Oefenweb.nodejs
+    - geerlingguy.adminer
     - app
