@@ -1,0 +1,12 @@
+.htaccess
+.idea
+.DS_Store
+data/*
+node_modules/
+app/config/config.local.php
+.phalcon
+logs
+app/cache/data/*
+app/cache/metadata/*
+app/cache/views/volt/*
+!.gitkeep
