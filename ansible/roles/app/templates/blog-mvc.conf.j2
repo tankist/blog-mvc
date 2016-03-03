@@ -1,10 +1,10 @@
 server {
     server_name "~^(?<subdomain>[\w\-]+)\.blog-mvc\.lan$";
-    root /var/www/blog-mvc/$subdomain/public;
+    root "/var/www/blog-mvc/$subdomain/public";
     index /index.php;
 
-    access_log off;
-    error_log  /var/www/blog-mvc/logs/blog-mvc.$subdomain.nginx.error.log notice;
+    access_log "/var/www/blog-mvc/logs/$subdomain.nginx.access.log" combined;
+    error_log  "/var/www/blog-mvc/logs/blog-mvc.nginx.error.log" notice;
 
     sendfile off;
 
