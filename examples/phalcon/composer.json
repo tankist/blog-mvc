@@ -15,5 +15,21 @@
             "email": "stalin1945@gmail.com"
         }
     ],
+    "autoload": {
+        "psr-4": {
+            "Controller\\": "app/controllers/",
+            "Model\\": "app/models/",
+            "Service\\": "app/services/",
+            "Traits\\": "app/traits/",
+            "Form\\": "app/forms/",
+            "Migration\\": "app/migrations/",
+            "Plugin\\": "app/plugins/",
+            "Library\\": "library/",
+            "Task\\": "app/tasks/",
+            "Tag\\": "app/tags/",
+            "Widget\\": "app/widgets/",
+            "Exception\\": "app/exceptions/"
+        }
+    },
     "minimum-stability": "dev"
 }

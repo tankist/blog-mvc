@@ -1,7 +1,11 @@
 <?php
 
-require_once __DIR__ . "/../../vendor/autoload.php";
+defined('APPLICATION_PATH') or define('APPLICATION_PATH', realpath(__DIR__ . '/..'));
 
-$application = new \Phalcon\Mvc\Application();
+require __DIR__ . '/../../vendor/autoload.php';
+
+$di = require __DIR__ . '/services.php';
+
+$application = new \Phalcon\Mvc\Application($di);
 
 return $application;
