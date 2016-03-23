@@ -1,5 +1,8 @@
 <?php
 
+use Phalcon\Session\Adapter\Files as Session;
+use Phalcon\Forms\Manager as FormsManager;
+
 $config = require __DIR__ . '/config.php';
 
 $di = new \Phalcon\DI\FactoryDefault();
@@ -50,6 +53,49 @@ $di['cookies'] = function () {
 	$cookies = new \Phalcon\Http\Response\Cookies();
 	$cookies->useEncryption(false);
 	return $cookies;
+};
+
+$di['assets'] = function () {
+	return require_once __DIR__ . '/assets.php';
+};
+
+// Register the flash service with custom CSS classes
+$di['flash'] = function () {
+	$flash = new \Phalcon\Flash\Direct(
+		array(
+			'error'   => 'alert alert-danger',
+			'success' => 'alert alert-success',
+			'notice'  => 'alert alert-info',
+			'warning' => 'alert alert-warning'
+		)
+	);
+	return $flash;
+};
+$di['flashSession'] = function () {
+	$flash = new \Phalcon\Flash\Session(
+		array(
+			'error'   => 'alert alert-danger',
+			'success' => 'alert alert-success',
+			'notice'  => 'alert alert-info',
+			'warning' => 'alert alert-warning'
+		)
+	);
+	return $flash;
+};
+
+$di['session'] = function () {
+	$session = new Session();
+	$session->start();
+	return $session;
+};
+
+$di['forms'] = function () {
+	$formsManager = new FormsManager();
+	$forms = (array) @include __DIR__ . '/forms.php';
+	foreach ($forms as $name => $form) {
+		$formsManager->set($name, $form);
+	}
+	return $formsManager;
 };
 
 $di['exceptionPlugin'] = '\Plugin\Exception';

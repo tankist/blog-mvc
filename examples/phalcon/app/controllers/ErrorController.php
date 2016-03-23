@@ -11,19 +11,13 @@ class ErrorController extends Controller
 {
 
     /**
-     * Initialize error controller
-     */
-    public function initialize()
-    {
-        $this->view->setLayout('error');
-    }
-
-    /**
      * Main index action
+     * @param integer $code
      * @param string $error
      */
-    public function indexAction($error = '')
+    public function indexAction($code, $error = '')
     {
-        $this->view->setVar('code', $error);
+        $this->view->setVar('code', $code);
+        $this->view->setVar('error', $error);
     }
 }

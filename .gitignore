@@ -4,5 +4,5 @@
 vendor
 composer.lock
 examples/data.sql
-logs/*
+examples/logs/*
 !.gitkeep
