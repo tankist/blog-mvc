@@ -11,12 +11,12 @@ class AuthController extends Controller
 
     public function signUpAction()
     {
-        $a = 1;
+
     }
 
     public function signInAction()
     {
-
+        
     }
 
     public function signUpPostAction()

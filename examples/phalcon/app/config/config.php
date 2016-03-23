@@ -1,5 +1,7 @@
 <?php
 
+defined('APPLICATION_PATH') or define('APPLICATION_PATH', __DIR__ . '/..');
+
 $local = (array) @include __DIR__ . '/config.local.php';
 
 $config = [

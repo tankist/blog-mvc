@@ -59,6 +59,10 @@ $di['assets'] = function () {
 	return require_once __DIR__ . '/assets.php';
 };
 
+$di['acl'] = function () {
+	return require_once __DIR__ . '/acl.php';
+};
+
 // Register the flash service with custom CSS classes
 $di['flash'] = function () {
 	$flash = new \Phalcon\Flash\Direct(
@@ -71,6 +75,7 @@ $di['flash'] = function () {
 	);
 	return $flash;
 };
+
 $di['flashSession'] = function () {
 	$flash = new \Phalcon\Flash\Session(
 		array(
@@ -98,7 +103,27 @@ $di['forms'] = function () {
 	return $formsManager;
 };
 
+$di['dispatcher'] = function () use ($di) {
+    /** @var \Phalcon\Events\Manager $eventsManager */
+    $eventsManager = $di->getShared('eventsManager');
+
+    $eventsManager->attach('dispatch', $di->get('exceptionPlugin'));
+    $eventsManager->attach('dispatch', $di->get('authPlugin'));
+
+    $dispatcher = new \Phalcon\Mvc\Dispatcher();
+    $dispatcher->setEventsManager($eventsManager);
+    return $dispatcher;
+};
+
 $di['exceptionPlugin'] = '\Plugin\Exception';
-$di['authPlugin'] = '\Plugin\Auth';
+$di['authPlugin'] = [
+    'className' => '\Plugin\Auth',
+    'arguments' => [
+        [
+            'type' => 'service',
+            'name' => 'acl',
+        ],
+    ],
+];
 
 return $di;
