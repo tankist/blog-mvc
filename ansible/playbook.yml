@@ -1,8 +1,14 @@
 ---
 - hosts: all
-  sudo: true
+  become: true
   vars_files:
     - vars/all.yml
+
+  pre_tasks:
+    - name: Add repository for PHP 7.
+      apt_repository: repo='ppa:ondrej/php'
+      when: ansible_os_family == 'Debian'
+
   roles:
     - swap
     - server
@@ -10,9 +16,9 @@
     - geerlingguy.nginx
     - geerlingguy.mysql
 #    - mysql
-    - tankist.php-fpm
+    - geerlingguy.php
     - phalcon
-    - tankist.php-xdebug
+    - geerlingguy.php-xdebug
     - T2L.composer
     - Oefenweb.nodejs
     - geerlingguy.adminer

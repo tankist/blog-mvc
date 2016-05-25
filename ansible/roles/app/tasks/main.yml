@@ -8,7 +8,7 @@
     group: root
     mode: 0644
   notify: restart nginx
-  with_items: app.environments
+  with_items: "{{app.environments}}"
   when: app.environments
   register: app_ini
 
@@ -18,9 +18,9 @@
     src="/etc/nginx/sites-available/{{ item }}.conf"
     state=link
     owner=root group=root
-  with_items: app.environments
+  with_items: "{{app.environments}}"
   when: app_ini|changed and app.environments
-  sudo: yes
+  become: yes
   notify: restart nginx
 
 - name: Add link to the source directory to the home

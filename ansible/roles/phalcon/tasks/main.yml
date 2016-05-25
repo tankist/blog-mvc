@@ -1,4 +1,16 @@
 ---
+- name: Check Zephir exists
+  shell: zephir version
+  changed_when: False
+  register: zephir_version
+
+- name: Zephir source files
+  git:
+    repo=git://github.com/phalcon/zephir.git
+    dest=/tmp/zephir accept_hostkey=yes
+    force=yes
+  when: zephir_version.stdout == ""
+
 - name: Check Phalcon version
   shell: php -i |awk '/Phalcon Version/{print $NF}'
   changed_when: False
@@ -8,35 +20,36 @@
   git:
     repo=git://github.com/phalcon/cphalcon.git
     dest=/tmp/cphalcon accept_hostkey=yes
-    version={{ 'phalcon-v%s'|format(phalcon.version) }}
+    version={{ phalcon.version }}
+    force=yes
   when: phalcon_version.stdout != "{{ phalcon.version }}"
 
 - name: Build Phalcon module
-  shell: ./install chdir=/tmp/cphalcon/build
+  shell: "cd /tmp/cphalcon && zephir build --backend=ZendEngine3"
   when: phalcon_version.stdout != "{{ phalcon.version }}"
-  sudo: yes
+  become: yes
   register: cphalcon_build
 
 - name: Phalcon ini file
   lineinfile:
-    dest=/etc/php5/mods-available/phalcon.ini
+    dest=/etc/php/7.0/mods-available/phalcon.ini
     line='extension=phalcon.so'
     state=present
     owner=root group=root mode=644
     create=yes
   when: cphalcon_build|changed
-  sudo: yes
+  become: yes
   register: phalcon_ini
 
 - name: Phalcone module enabled
   file:
-    path=/etc/php5/{{ item.path }}/conf.d/30-phalcon.ini
-    src=/etc/php5/mods-available/phalcon.ini
+    path=/etc/php/7.0/{{ item.path }}/conf.d/30-phalcon.ini
+    src=/etc/php/7.0/mods-available/phalcon.ini
     state=link
     owner=root group=root
   with_items:
     - { path: 'fpm' }
     - { path: 'cli' }
   when: phalcon_ini|changed
-  sudo: yes
-  notify: restart php5-fpm
+  become: yes
+  notify: restart php7.0-fpm
